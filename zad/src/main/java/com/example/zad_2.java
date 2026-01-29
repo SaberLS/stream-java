@@ -35,7 +35,7 @@ public class zad_2 {
         new Product("Biurko", "Meble", 1500.00),
         new Product("Drukarka HP", "Elektronika", 900.00));
 
-    System.out.print(zad_2.solution(products));
+    System.out.println(zad_2.solution(products));
   }
 }
 
