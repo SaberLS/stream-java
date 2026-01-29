@@ -10,6 +10,19 @@ import lombok.Setter;
 
 public class zad_2 {
   public static void main(String[] args) {
+    zad_2.example();
+  }
+
+  public static List<String> solution(List<Product> products) {
+    return products.stream()
+        .filter(product -> product.getCategory().equals("Elektronika")
+            && product.getPrice() > 1000)
+        .sorted(Comparator.comparingDouble(Product::getPrice).reversed())
+        .map(Product::getName)
+        .toList();
+  }
+
+  public static void example() {
     List<Product> products = Arrays.asList(
         new Product("Laptop Dell", "Elektronika", 3500.00),
         new Product("Mysz Logitech", "Elektronika", 150.00),
@@ -24,16 +37,6 @@ public class zad_2 {
 
     System.out.print(zad_2.solution(products));
   }
-
-  public static List<String> solution(List<Product> products) {
-    return products.stream()
-        .filter(product -> product.getCategory().equals("Elektronika")
-            && product.getPrice() > 1000)
-        .sorted(Comparator.comparingDouble(Product::getPrice).reversed())
-        .map(Product::getName)
-        .toList();
-  }
-
 }
 
 @Getter

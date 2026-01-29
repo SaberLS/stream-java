@@ -14,7 +14,76 @@ import lombok.ToString;
 
 public class zad_4 {
   public static void main(String[] args) {
+  }
 
+  public static Map<String, List<ProductStats>> solution(List<Order> orders) {
+    return zad_4.orderCountByCategoryAndProduct(orders).entrySet()
+        .stream()
+        .collect(Collectors.toMap(
+            Map.Entry::getKey, // category
+            e -> zad_4.topProducts(e.getValue(), 3)));
+  }
+
+  public static Map<String, Map<String, Long>> orderCountByCategoryAndProduct(List<Order> orders) {
+    return zad_4.completedOrders(orders.stream())
+        .flatMap(zad_4::uniqueProductsPerOrder)
+        .collect(zad_4.countProductsByCategory());
+
+    // zad_4.orderCountByCategoryAndProduct(orders).forEach((category, products) ->
+    // {
+    // System.out.println(category + ":");
+    // products.forEach((name, occurences) -> System.out.println("\t" + name + " = "
+    // + occurences));
+    // });
+    // OUT:
+    /*
+     * Dekoracje:
+     * * Dywan = 2
+     * * Oświetlenie:
+     * * Lampa LED = 3
+     * Elektronika:
+     * * Mysz Logitech = 3
+     * * Laptop Dell = 3
+     * * Klawiatura Razer = 3
+     * * Monitor Samsung = 3
+     * Meble:
+     * * Biurko Ikea = 3
+     * * Krzesło Herman Miller = 3
+     */
+  }
+
+  public static Stream<Order> completedOrders(Stream<Order> orders) {
+    return orders
+        .filter(o -> "ZREALIZOWANE".equals(o.getStatus()));
+  }
+
+  public static Stream<Map.Entry<String, String>> uniqueProductsPerOrder(Order order) {
+    return order.getItems().stream()
+        .map(item -> // OrderItem
+        Map.entry(item.getCategory(), item.getProductName()))
+        .distinct(); // jeden produkt = jedno zamówienie
+  }
+
+  public static Collector<Map.Entry<String, String>, ? // dowolny typ
+      , Map<String, Map<String, Long>>> countProductsByCategory() {
+    return Collectors.groupingBy(
+        Map.Entry::getKey, // category
+        Collectors.groupingBy( // ile razy się pojawił produkt
+            Map.Entry::getValue, // product
+            Collectors.counting()));
+  }
+
+  public static List<ProductStats> topProducts(
+      Map<String, Long> productCounts, int limit) {
+
+    return productCounts.entrySet().stream()
+        .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+        .limit(limit)
+        .map(product -> new ProductStats(product.getKey(), product.getValue()))
+        .toList();
+  }
+
+  public static void example() {
     List<Order> orders = Arrays.asList(
         new Order("ORD001", "ZREALIZOWANE", Arrays.asList(
             new OrderItem("Laptop Dell", "Elektronika", 1, 3500),
@@ -52,77 +121,14 @@ public class zad_4 {
             new OrderItem("Krzesło Herman Miller", "Meble", 1, 2500),
             new OrderItem("Dywan", "Dekoracje", 1, 350))));
 
-    zad_4.solution(orders).forEach((category, products) -> {
+    zad_4.printSolution(zad_4.solution(orders));
+  }
+
+  public static void printSolution(Map<String, List<ProductStats>> data) {
+    data.forEach((category, products) -> {
       System.out.println(category + ":");
       products.forEach(p -> System.out.println("\t" + p));
     });
-  }
-
-  public static Stream<Order> completedOrders(Stream<Order> orders) {
-    return orders
-        .filter(o -> "ZREALIZOWANE".equals(o.getStatus()));
-  }
-
-  public static Stream<Map.Entry<String, String>> uniqueProductsPerOrder(Order order) {
-    return order.getItems().stream()
-        .map(item -> // OrderItem
-        Map.entry(item.getCategory(), item.getProductName()))
-        .distinct(); // jeden produkt = jedno zamówienie
-  }
-
-  public static Collector<Map.Entry<String, String>, ? // dowolny typ
-      , Map<String, Map<String, Long>>> countProductsByCategory() {
-    return Collectors.groupingBy(
-        Map.Entry::getKey, // category
-        Collectors.groupingBy( // ile razy się pojawił produkt
-            Map.Entry::getValue, // product
-            Collectors.counting()));
-  }
-
-  public static Map<String, Map<String, Long>> orderCountByCategoryAndProduct(List<Order> orders) {
-    return zad_4.completedOrders(orders.stream())
-        .flatMap(zad_4::uniqueProductsPerOrder)
-        .collect(zad_4.countProductsByCategory());
-
-    // zad_4.orderCountByCategoryAndProduct(orders).forEach((category, products) ->
-    // {
-    // System.out.println(category + ":");
-    // products.forEach((name, occurences) -> System.out.println("\t" + name + " = "
-    // + occurences));
-    // });
-    // OUT:
-    /*
-     * Dekoracje:
-     * * Dywan = 2
-     * * Oświetlenie:
-     * * Lampa LED = 3
-     * Elektronika:
-     * * Mysz Logitech = 3
-     * * Laptop Dell = 3
-     * * Klawiatura Razer = 3
-     * * Monitor Samsung = 3
-     * Meble:
-     * * Biurko Ikea = 3
-     * * Krzesło Herman Miller = 3
-     */
-  }
-
-  public static List<ProductStats> topProducts(
-      Map<String, Long> productCounts, int limit) {
-
-    return productCounts.entrySet().stream()
-        .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-        .limit(limit)
-        .map(product -> new ProductStats(product.getKey(), product.getValue()))
-        .toList();
-  }
-
-  public static Map<String, List<ProductStats>> solution(List<Order> orders) {
-    return zad_4.orderCountByCategoryAndProduct(orders).entrySet()
-        .stream()
-        .collect(Collectors.toMap(
-            Map.Entry::getKey, // category
-            e -> zad_4.topProducts(e.getValue(), 3)));
   }
 }
 

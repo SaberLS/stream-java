@@ -11,6 +11,22 @@ import lombok.Setter;
 
 public class zad_3 {
   public static void main(String[] args) {
+    zad_3.example();
+  }
+
+  static Map<String, Double> solution(List<Employee> employees) {
+    return employees.stream()
+        .collect(Collectors.groupingBy(
+            Employee::getDepartment,
+            Collectors.collectingAndThen(
+                Collectors.averagingDouble(Employee::getSalary),
+                avg -> Math.round(avg * 100.0) / 100.0)))
+        .entrySet().stream()
+        .filter(avg -> avg.getValue() > 5000)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
+  public static void example() {
     List<Employee> employees = Arrays.asList(
         new Employee("Anna Kowalska", "IT", 8000.00),
         new Employee("Jan Nowak", "IT", 7500.00),
@@ -27,19 +43,11 @@ public class zad_3 {
         new Employee("Joanna Grabowska", "HR", 4200.00),
         new Employee("Adam Pawlak", "Sprzedaż", 6200.00));
 
-    zad_3.solution(employees).forEach((dept, avg) -> System.out.println(dept + " = " + avg));
+    zad_3.printSolution(zad_3.solution(employees));
   }
 
-  static Map<String, Double> solution(List<Employee> employees) {
-    return employees.stream()
-        .collect(Collectors.groupingBy(
-            Employee::getDepartment,
-            Collectors.collectingAndThen(
-                Collectors.averagingDouble(Employee::getSalary),
-                avg -> Math.round(avg * 100.0) / 100.0)))
-        .entrySet().stream()
-        .filter(avg -> avg.getValue() > 5000)
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  public static void printSolution(Map<String, Double> data) {
+    data.forEach((dept, avg) -> System.out.println(dept + " = " + avg));
   }
 }
 

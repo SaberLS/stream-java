@@ -5,6 +5,10 @@ import java.util.List;
 
 public class zad_1 {
   public static void main(String[] args) {
+    zad_1.example();
+  }
+
+  public static void example() {
     System.out.println(
         zad_1.solution(
             Arrays.asList(15, 8, 23, 4, 42, 16, 11, 30, 7, 19, 2, 35, 28, 13, 6)));
