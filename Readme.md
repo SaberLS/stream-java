@@ -9,8 +9,8 @@
 1. Sklonuj repozytorium
 
 ```bash
-git clone https://github.com/SaberLS/terminal-lib-manager.git
-cd terminal-lib-manager
+git clone https://github.com/SaberLS/stream-java.git
+cd stream-java
 ```
 
 2. Zbuduj projekt:
